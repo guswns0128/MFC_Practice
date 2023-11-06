@@ -34,4 +34,13 @@ public:
 	afx_msg void OnBnClickedButtonFile();
 	CString strFilePath;
 	afx_msg void OnBnClickedButtonFind();
+	static UINT Thread_Proc1(LPVOID Param);
+	static UINT Thread_Proc2(LPVOID Param);
+
+	CWinThread* m_thread1;
+	CWinThread* m_thread2;
+
+	HANDLE m_hEvent;
+
+
 };

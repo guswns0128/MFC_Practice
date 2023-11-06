@@ -49,6 +49,9 @@ BOOL CFileInOutDlg::OnInitDialog()
 
 	// TODO: 여기에 추가 초기화 작업을 추가합니다.
 
+	m_thread1 = AfxBeginThread(Thread_Proc1, this);
+	m_thread2 = AfxBeginThread(Thread_Proc2, this);
+
 	return TRUE;  // 포커스를 컨트롤에 설정하지 않으면 TRUE를 반환합니다.
 }
 
@@ -101,9 +104,9 @@ void CFileInOutDlg::OnBnClickedButtonFile()
 		strFilePath = Dlg.GetPathName();
 	}
 
+	
+
 }
-
-
 
 
 void CFileInOutDlg::OnBnClickedButtonFind()
@@ -112,3 +115,27 @@ void CFileInOutDlg::OnBnClickedButtonFind()
 
 	
 }
+
+UINT CFileInOutDlg::Thread_Proc1(LPVOID Param)
+{
+	//AfxGetApp 를 사용하여 UI 스레드에 직접 접근가능하지만 정석은 PostMessage를 사용하여 접근하는 것
+	//직접 접근은 권장하지 않음
+
+	CFileInOutDlg* pMain = (CFileInOutDlg*)AfxGetApp()->m_pMainWnd;
+	CString str;
+	while (1)
+	{
+		str += "AAA\r\n";
+		pMain->SetDlgItemTextW(IDC_EDIT_PRINT, str);
+		Sleep(1000);
+	}
+
+	return 0;
+}
+
+UINT CFileInOutDlg::Thread_Proc2(LPVOID Param)
+{
+	return 0;
+}
+
+
