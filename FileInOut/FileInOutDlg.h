@@ -32,10 +32,13 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnBnClickedButtonFile();
-	CString strFilePath;
+	CString m_strFilePath;
 	afx_msg void OnBnClickedButtonFind();
+
 	static UINT Thread_Proc1(LPVOID Param);
 	static UINT Thread_Proc2(LPVOID Param);
+	
+	void print_string(CString strPath);
 
 	CWinThread* m_thread1;
 	CWinThread* m_thread2;

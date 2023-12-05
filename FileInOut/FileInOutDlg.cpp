@@ -49,6 +49,8 @@ BOOL CFileInOutDlg::OnInitDialog()
 
 	// TODO: 여기에 추가 초기화 작업을 추가합니다.
 
+	m_hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
+
 	m_thread1 = AfxBeginThread(Thread_Proc1, this);
 	m_thread2 = AfxBeginThread(Thread_Proc2, this);
 
@@ -98,16 +100,43 @@ void CFileInOutDlg::OnBnClickedButtonFile()
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 	CFileDialog Dlg(TRUE,NULL,NULL,OFN_HIDEREADONLY,_T("모든파일(*.*)|*.*||"));
 	
+	bool bRet = false;
 
 	if (Dlg.DoModal() == IDOK)
 	{
-		strFilePath = Dlg.GetPathName();
+		m_strFilePath = Dlg.GetPathName();
+		bRet = true;
 	}
+
+	if (bRet)
+	{
+		print_string(m_strFilePath);
+	}
+	
 
 	
 
 }
 
+void CFileInOutDlg::print_string(CString strPath)
+{
+	const char* ch = (CStringA)strPath;
+	FILE* stream;
+	fopen_s(&stream, ch, "rt");
+	if (stream == NULL)return;
+
+	char str[128];
+	CString string;
+	while (fgets(str, 125, stream) != NULL)
+	{
+		string += str;
+		string += "\r\n";
+	}
+	fclose(stream);
+
+	SetDlgItemText(IDC_EDIT_PRINT, string);
+
+}
 
 void CFileInOutDlg::OnBnClickedButtonFind()
 {
@@ -123,10 +152,13 @@ UINT CFileInOutDlg::Thread_Proc1(LPVOID Param)
 
 	CFileInOutDlg* pMain = (CFileInOutDlg*)AfxGetApp()->m_pMainWnd;
 	CString str;
+
+	DWORD ret = WaitForSingleObject(pMain->m_hEvent, INFINITE);
+
 	while (1)
 	{
 		str += "AAA\r\n";
-		pMain->SetDlgItemTextW(IDC_EDIT_PRINT, str);
+		pMain->SetDlgItemText(IDC_EDIT_PRINT, str);
 		Sleep(1000);
 	}
 
